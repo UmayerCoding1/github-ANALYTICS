@@ -13,7 +13,7 @@ interface RepoTableProps {
 export function RepoTable({ data }: RepoTableProps) {
     const [search, setSearch] = useState("");
     const repos = data.repositories.nodes;
-
+    console.log(data)
     const filteredRepos = repos.filter((repo) =>
         repo.name.toLowerCase().includes(search.toLowerCase())
     );

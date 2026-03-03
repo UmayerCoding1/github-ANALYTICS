@@ -24,8 +24,35 @@ export function StatsGrid({ data }: StatsGridProps) {
     const totalForks = repos.reduce((acc, r) => acc + r.forkCount, 0);
     const totalCommits = data.contributionsCollection.totalCommitContributions;
     const lastMonthCommits = data.contributionsCollection.contributionCalendar.totalContributions; // Approximation from calendar
+    const now = new Date();
+
+    const currentMonth = now.getMonth(); // 0-11
+    const currentYear = now.getFullYear();
+
+    // Last month handle (January hole year change hobe)
+    const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
     const lastCommitDate = repos.length > 0 ? new Date(repos[0].updatedAt) : new Date();
+    const weeks = data.contributionsCollection.contributionCalendar.weeks;
+    const allDays = weeks.flatMap((week: any) => week.contributionDays);
+    const lastMonthData = allDays.filter((day: any) => {
+        const date = new Date(day.date);
+
+        return (
+            date.getMonth() === lastMonth &&
+            date.getFullYear() === lastMonthYear
+        );
+    });
+    const totalLastMonthCommits = lastMonthData.reduce(
+        (total: number, day: any) => total + day.contributionCount,
+        0
+    );
+    const totalLastYearCommits = allDays.reduce(
+        (total: number, day: any) => total + day.contributionCount,
+        0
+    );
+
 
     const stats = [
         {
@@ -44,17 +71,24 @@ export function StatsGrid({ data }: StatsGridProps) {
         },
         {
             label: "Total Commits",
-            value: totalCommits,
+            value: totalCommits + lastMonthCommits,
             icon: GitCommit,
             color: "text-emerald-400",
             bg: "bg-emerald-400/10",
         },
         {
             label: "Last Month",
-            value: lastMonthCommits,
+            value: totalLastMonthCommits,
             icon: Calendar,
             color: "text-purple-400",
             bg: "bg-purple-400/10",
+        },
+        {
+            label: "Last Year",
+            value: totalLastYearCommits,
+            icon: Calendar,
+            color: "text-orange-400",
+            bg: "bg-orange-400/10",
         },
         {
             label: "Total Stars",
@@ -63,13 +97,7 @@ export function StatsGrid({ data }: StatsGridProps) {
             color: "text-yellow-400",
             bg: "bg-yellow-400/10",
         },
-        {
-            label: "Total Forks",
-            value: totalForks,
-            icon: GitFork,
-            color: "text-orange-400",
-            bg: "bg-orange-400/10",
-        },
+
     ];
 
     return (

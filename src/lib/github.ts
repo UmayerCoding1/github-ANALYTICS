@@ -95,11 +95,10 @@ export async function fetchGitHubData(): Promise<GitHubStats> {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ query }),
-    next: { revalidate: 600 }, // cache 10 min
+    cache: "no-store",
   });
 
   const result = await response.json();
-
   if (!response.ok || result.errors) {
     throw new Error(
       result?.errors?.[0]?.message || "Failed to fetch GitHub data"

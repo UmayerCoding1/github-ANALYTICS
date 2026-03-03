@@ -22,7 +22,7 @@ export default function DashboardPage() {
       setLoading(true);
       const res = await fetch("/api/github-stats");
       const result = await res.json();
-
+      console.log(result)
       if (result.error) throw new Error(result.error);
 
       setData(result);
