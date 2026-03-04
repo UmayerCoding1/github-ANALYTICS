@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { GitHubStats } from "@/lib/github";
 import { StatsGrid } from "@/components/dashboard/stats-grid";
-import { ChartsGrid } from "@/components/dashboard/charts";
 import { RepoTable } from "@/components/dashboard/repo-table";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { ProfileHeader } from "@/components/dashboard/profile-header";
+import { LanguageChart } from "@/components/dashboard/language-chart";
+import { CommitHeatmap } from "@/components/dashboard/commit-heatmap";
+import { RepositorySpotlight } from "@/components/dashboard/repository-spotlight";
 import { RefreshCw, Github, LogOut, LayoutDashboard, Settings } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -68,7 +70,7 @@ export default function DashboardPage() {
           <div className="bg-emerald-500 p-2 rounded-xl">
             <Github className="w-6 h-6 text-black" />
           </div>
-          <span className="text-lg font-bold tracking-tight text-white">UMAYER ANALYTICS</span>
+          <span className="text-lg font-bold tracking-tight text-white uppercase italic">Umayer Analytics</span>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -95,8 +97,8 @@ export default function DashboardPage() {
         {/* Top Navbar */}
         <div className="flex items-center justify-between mb-12">
           <div>
-            <h2 className="text-2xl font-bold text-white mb-1">Overview</h2>
-            <p className="text-sm text-white/30 italic">Real-time GitHub deep analytics</p>
+            <h2 className="text-2xl font-bold text-white mb-1">Developer Insights</h2>
+            <p className="text-sm text-white/30 italic">Detailed metrics and repository analysis</p>
           </div>
 
           <div className="flex items-center gap-4">
@@ -144,22 +146,25 @@ export default function DashboardPage() {
               <ProfileHeader data={data} />
               <StatsGrid data={data} />
 
+              {/* <RepositorySpotlight data={data} /> */}
+
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
                 <div className="xl:col-span-2 space-y-8">
-                  <ChartsGrid data={data} />
+                  <CommitHeatmap data={data} />
                   <RepoTable data={data} />
                 </div>
                 <div className="space-y-8 sticky top-8">
+                  {/* <LanguageChart data={data} /> */}
                   <RecentActivity data={data} />
 
                   {/* Upgrade Card - Extra Touch */}
-                  <Card className="bg-emerald-gradient border-none" delay={0.6}>
+                  <Card className="bg-emerald-500/10 border-emerald-500/20" delay={0.6}>
                     <CardContent className="p-6">
-                      <h4 className="text-lg font-bold text-black mb-2">Pro Analytics</h4>
-                      <p className="text-black/70 text-sm mb-6">
+                      <h4 className="text-lg font-bold text-white mb-2">Pro Analytics</h4>
+                      <p className="text-white/50 text-sm mb-6">
                         Get deeper insights with commit frequency analysis and organization health tracking.
                       </p>
-                      <button className="w-full bg-black text-white py-3 rounded-xl font-semibold hover:bg-black/80 transition-all">
+                      <button className="w-full bg-emerald-500 text-black py-3 rounded-xl font-semibold hover:bg-emerald-600 transition-all">
                         Upgrade Now
                       </button>
                     </CardContent>
@@ -171,8 +176,8 @@ export default function DashboardPage() {
         </AnimatePresence>
 
         <footer className="mt-20 py-8 border-t border-white/5 text-center">
-          <p className="text-white/20 text-sm">
-            &copy; {new Date().getFullYear()} Umayer GitHub Analytics. Build with Next.js 14.
+          <p className="text-white/20 text-sm italic">
+            &copy; {new Date().getFullYear()} Umayer GitHub Analytics. Built with Next.js 15 & Framer Motion.
           </p>
         </footer>
       </main>

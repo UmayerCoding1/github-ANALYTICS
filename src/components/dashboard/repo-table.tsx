@@ -4,7 +4,7 @@ import { useState } from "react";
 import { GitHubStats } from "@/lib/github";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Search, Star, GitFork, ExternalLink } from "lucide-react";
-import { formatRelativeTime } from "@/lib/utils";
+import { formatRelativeTime, cn } from "@/lib/utils";
 
 interface RepoTableProps {
     data: GitHubStats;
@@ -12,10 +12,24 @@ interface RepoTableProps {
 
 export function RepoTable({ data }: RepoTableProps) {
     const [search, setSearch] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
     const repos = data.repositories.nodes;
-    console.log(data)
     const filteredRepos = repos.filter((repo) =>
         repo.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    // Reset pagination when search changes
+    const handleSearchChange = (val: string) => {
+        setSearch(val);
+        setCurrentPage(1);
+    };
+
+    const totalPages = Math.ceil(filteredRepos.length / ITEMS_PER_PAGE);
+    const paginatedRepos = filteredRepos.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
     );
 
     return (
@@ -29,7 +43,7 @@ export function RepoTable({ data }: RepoTableProps) {
                         placeholder="Search repositories..."
                         className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-emerald-500/50 transition-colors"
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => handleSearchChange(e.target.value)}
                     />
                 </div>
             </CardHeader>
@@ -46,7 +60,7 @@ export function RepoTable({ data }: RepoTableProps) {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {filteredRepos.map((repo) => (
+                        {paginatedRepos.map((repo) => (
                             <tr key={repo.name} className="group hover:bg-white/[0.02] transition-colors">
                                 <td className="px-6 py-4">
                                     <span className="text-sm font-medium text-white group-hover:text-emerald-400 transition-colors">
@@ -102,8 +116,36 @@ export function RepoTable({ data }: RepoTableProps) {
                     </tbody>
                 </table>
             </CardContent>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between">
+                    <p className="text-xs text-white/40">
+                        Showing <span className="text-white font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-white font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredRepos.length)}</span> of <span className="text-white font-medium">{filteredRepos.length}</span> repositories
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-white/5 border border-white/10 rounded-lg text-xs font-medium text-white transition-all cursor-pointer disabled:cursor-not-allowed"
+                        >
+                            Previous
+                        </button>
+                        <div className="flex items-center px-3 gap-1">
+                            <span className="text-xs font-medium text-emerald-400">{currentPage}</span>
+                            <span className="text-xs text-white/30">/</span>
+                            <span className="text-xs text-white/30">{totalPages}</span>
+                        </div>
+                        <button
+                            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-white/5 border border-white/10 rounded-lg text-xs font-medium text-white transition-all cursor-pointer disabled:cursor-not-allowed"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            )}
         </Card>
     );
 }
-
-import { cn } from "@/lib/utils";
