@@ -9,7 +9,8 @@ import { ProfileHeader } from "@/components/dashboard/profile-header";
 import { LanguageChart } from "@/components/dashboard/language-chart";
 import { CommitHeatmap } from "@/components/dashboard/commit-heatmap";
 import { RepositorySpotlight } from "@/components/dashboard/repository-spotlight";
-import { RefreshCw, Github, LogOut, LayoutDashboard, Settings } from "lucide-react";
+import { Sidebar } from "@/components/dashboard/sidebar";
+import { RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -30,8 +31,8 @@ export default function DashboardPage() {
       setData(result);
       setError(null);
       setLastRefreshed(new Date());
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
@@ -64,33 +65,8 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar - Desktop */}
-      <aside className="hidden lg:flex w-72 flex-col border-r border-white/5 bg-black/50 backdrop-blur-xl sticky top-0 h-screen p-6">
-        <div className="flex items-center gap-3 mb-12">
-          <div className="bg-emerald-500 p-2 rounded-xl">
-            <Github className="w-6 h-6 text-black" />
-          </div>
-          <span className="text-lg font-bold tracking-tight text-white uppercase italic">Umayer Analytics</span>
-        </div>
+      <Sidebar />
 
-        <nav className="flex-1 space-y-2">
-          <a href="#" className="flex items-center gap-3 p-4 rounded-xl bg-emerald-500/10 text-emerald-400 group transition-all">
-            <LayoutDashboard className="w-5 h-5" />
-            <span className="font-medium">Dashboard</span>
-          </a>
-          <a href="#" className="flex items-center gap-3 p-4 rounded-xl text-white/40 hover:text-white hover:bg-white/5 transition-all">
-            <Settings className="w-5 h-5" />
-            <span className="font-medium">Settings</span>
-          </a>
-        </nav>
-
-        <div className="mt-auto">
-          <button className="flex items-center gap-3 p-4 w-full rounded-xl text-white/40 hover:text-red-400 hover:bg-red-400/5 transition-all">
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
-          </button>
-        </div>
-      </aside>
 
       {/* Main Content */}
       <main className="flex-1 px-4 md:px-8 py-8 md:py-12 max-w-7xl mx-auto w-full">
